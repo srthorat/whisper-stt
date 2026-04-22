@@ -1,0 +1,18 @@
+# Logrotate config for Whisper STT server
+# Install: sudo cp scripts/whisper-stt.logrotate /etc/logrotate.d/whisper-stt
+# Test:    sudo logrotate -d /etc/logrotate.d/whisper-stt
+
+/home/ubuntu/dev/whisper-stt/logs/server.log {
+    su ubuntu ubuntu
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+    size 10M
+    dateext
+    dateformat -%Y%m%d
+    create 0644 ubuntu ubuntu
+}

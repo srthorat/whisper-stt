@@ -1,0 +1,15 @@
+# Pinned dependency versions — generated from production venv
+# Regenerate with: pip freeze | grep -iE "faster-whisper|ctranslate|..."
+ctranslate2==4.7.1
+fastapi==0.133.1
+faster-whisper==1.2.1
+numpy==2.2.6
+prometheus_client==0.24.1
+pydantic==2.12.5
+pydantic_core==2.41.5
+python-dotenv==1.2.1
+soundfile==0.13.1
+starlette==0.52.1
+uvicorn==0.41.0
+webrtcvad==2.0.10
+websockets==16.0

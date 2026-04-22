@@ -1,0 +1,52 @@
+[Unit]
+Description=Whisper STT Streaming Server
+Documentation=file:///home/ubuntu/dev/whisper-stt/README.md
+After=network.target nvidia-persistenced.service
+Wants=nvidia-persistenced.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/dev/whisper-stt
+
+# Environment
+Environment=CUDA_VISIBLE_DEVICES=0
+Environment=OMP_NUM_THREADS=4
+Environment=CT2_CUDA_ALLOW_TF32=1
+Environment=LD_LIBRARY_PATH=/usr/local/cuda-13.0/targets/x86_64-linux/lib
+EnvironmentFile=/home/ubuntu/dev/whisper-stt/.env
+
+# Run
+ExecStartPre=/bin/mkdir -p /home/ubuntu/dev/whisper-stt/run /home/ubuntu/dev/whisper-stt/logs
+ExecStart=/home/ubuntu/dev/whisper-env/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --log-level info
+ExecStop=/bin/kill -SIGTERM $MAINPID
+PIDFile=/home/ubuntu/dev/whisper-stt/run/server.pid
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=32768
+
+# Restart policy
+Restart=on-failure
+RestartSec=10
+StartLimitBurst=5
+StartLimitIntervalSec=300
+
+# Watchdog: systemd will restart if process becomes unresponsive
+WatchdogSec=120
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ubuntu/dev/whisper-stt/logs /home/ubuntu/dev/whisper-stt/run
+PrivateTmp=true
+
+# Logging
+StandardOutput=append:/home/ubuntu/dev/whisper-stt/logs/server.log
+StandardError=append:/home/ubuntu/dev/whisper-stt/logs/server.log
+SyslogIdentifier=whisper-stt
+
+[Install]
+WantedBy=multi-user.target
